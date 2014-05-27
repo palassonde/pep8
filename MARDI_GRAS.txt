@@ -1,0 +1,243 @@
+;        Programme: MARDI_GRAS.TXT     
+;        version PEP813
+;
+;        TP1: Remise 18 février 2013
+;        Programme utilitaire qui affiche le début de la période du Mardi Gras.
+;
+;        auteur:   Pierre-Alexandre Lassonde
+;        courriel: pa.lassonde@gmail.com
+;        date:     Hiver 2013
+;        cours:    INF2170
+
+         STRO    bienvenu,d
+         STRO    emploi,d
+loop:    STRO    msg_a,d
+debut:   DECI    annee,d
+         LDA     annee,d
+         CPA     min,d
+         BRLT    invalid,i
+         CPA     max,d
+         BRGT    invalid,i
+         CALL    etape1
+         CALL    etape2
+         CALL    etape3
+         CALL    etape4
+         CALL    etape5
+         CALL    etape6
+         CALL    etape7
+         CALL    etape8
+         CALL    etape9
+         CALL    etape10
+         STX     n,d         ; numéro du mois (3 = mars, 4 = avril)
+         STA     p,d         ; jour de ce mois où tombe le dimanche de Pâques - 1
+         SUBA    46,i
+         STA     p,d
+         CPX     4,i
+         BREQ    avril
+         BR      mars
+avril:   ADDA    31,i
+         SUBX    1,i
+         STX     n,d
+         STA     p,d
+         CPA     0,i 
+         BRGT    choimois
+mars:    LDA     annee,d
+         ANDA    3,i        
+         BRNE    nonbisex     
+         LDA     annee,d     
+         CPA     1900,i	
+         BREQ    nonbisex
+         LDA     p,d
+         LDX     n,d
+         ADDA    29,i
+         SUBX    1,i
+         STA     p,d
+         STX     n,d
+         CPX     2,i
+         BREQ    fevrier1
+         CPX     3,i
+         BREQ    mars1 
+         
+nonbisex:LDA     p,d
+         LDX     n,d
+         ADDA    28,i
+         CPA     28,i
+         BRGT    mars1
+         SUBX    1,i
+         STA     p,d
+         STX     n,d
+         CPX     2,i
+         BREQ    fevrier1
+         CPX     3,i
+         BREQ    mars1
+
+choimois:CPX     2,i
+         BREQ    fevrier1
+         CPX     3,i
+         BREQ    mars1
+
+fevrier1:STRO    periode,d
+         DECO    p,d
+         STRO    mois2,d
+         DECO    annee,d    
+         BR      loop
+
+mars1:   STRO    periode,d
+         DECO    p,d
+         STRO    mois3,d
+         DECO    annee,d
+         BR      loop
+         
+etape1:  LDA     19,i
+         STA     diviseur,d
+         LDA     annee,d
+         LDX     0,i
+         BR      div 
+
+etape2:  STA     a,d
+         LDA     100,i
+         STA     diviseur,d
+         LDA     annee,d
+         LDX     0,i
+         BR      div
+
+etape3:  STX     b,d
+         STA     c,d
+         LDA     4,i
+         STA     diviseur,d
+         LDA     b,d
+         LDX     0,i
+         BR      div
+
+etape4:  STX     d,d
+         STA     e,d     
+         LDA     25,i
+         STA     diviseur,d
+         LDA     b,d
+         ADDA    8,i
+         LDX     0,i
+         BR      div
+
+etape5:  STX     f,d
+         LDA     3,i
+         STA     diviseur,d
+         LDA     b,d
+         SUBA    f,d
+         ADDA    1,i
+         LDX     0,i
+         BR      div
+
+etape6:  STX     g,d
+         LDA     30,i
+         STA     diviseur,d
+         LDA     a,d
+         ASLA    
+         ASLA
+         ASLA
+         ASLA
+         ADDA    a,d
+         ADDA    a,d
+         ADDA    a,d
+         ADDA    b,d
+         SUBA    d,d
+         SUBA    g,d
+         ADDA    15,i
+         LDX     0,i
+         BR      div
+
+etape7:  STA     h,d
+         LDA     4,i
+         STA     diviseur,d
+         LDA     c,d
+         LDX     0,i
+         BR      div
+
+etape8:  STX     i,d
+         STA     k,d
+         LDA     7,i
+         STA     diviseur,d
+         LDA     e,d
+         ASLA
+         ADDA    i,d
+         ADDA    i,d
+         SUBA    h,d
+         SUBA    k,d
+         ADDA    32,i
+         LDX     0,i
+         BR      div
+
+etape9:  STA     q,d
+         LDA     451,i
+         STA     diviseur,d
+         LDA     q,d
+         ASLA
+         ADDA    h,d
+         STA     m,d
+         ASLA
+         ASLA
+         ADDA    m,d
+         ASLA
+         ADDA    m,d
+         ADDA    a,d
+         LDX     0,i
+         BR      div
+
+etape10: STX     m,d
+         LDA     31,i
+         STA     diviseur,d
+         LDA     h,d
+         ADDA    q,d
+         LDX     m,d
+         ASLX
+         ASLX
+         ASLX
+         SUBX    m,d
+         STX     n,d
+         SUBA    n,d
+         ADDA    114,i
+         LDX     0,i
+         BR      div
+
+div:     CPA     diviseur,d
+         BRLT    div_fin 
+         SUBA    diviseur,d
+         ADDX    1,i
+         BR      div
+div_fin: RET0 
+
+invalid: STRO    erreur,d
+         BR      debut,i
+
+fin:     STRO    quitter,d
+         STOP
+
+bienvenu:.ASCII  "Bienvenue dans ce Programme utilitaire qui affiche le début de la période du Mardi Gras.\n\x00"
+emploi:  .ASCII  "\nVous pouvez entrer n'importe quelle date comprise entre 1900 et 2049, pour quitter tapez la touche entrée.\n\x00"
+msg_a:   .ASCII  "\nEntrez l'année désirée: \x00"
+erreur:  .ASCII  "Donnée invalide, entrez de nouveau: \x00"
+periode: .ASCII  "La période du Mardi Gras débute le \x00"
+mois2:   .ASCII  " février \x00"
+mois3:   .ASCII  " mars \x00"
+quitter: .ASCII  "\nMerci au revoir"
+
+annee:   .WORD   0
+min:     .WORD   1900
+max:     .WORD   2049
+diviseur:.WORD   0
+mardi_g: .WORD   0
+a:       .WORD   0
+b:       .WORD   0       
+c:       .WORD   0
+d:       .WORD   0
+e:       .WORD   0
+f:       .WORD   0
+g:       .WORD   0
+h:       .WORD   0
+i:       .WORD   0           
+k:       .WORD   0
+q:       .WORD   0
+m:       .WORD   0
+n:       .WORD   0
+p:       .WORD   0
+        
+         .END            
