@@ -1,4 +1,4 @@
-# Travail pratique en Assembleur UQAM
+# Calculateur de mardi gras
 
 ## Description
 
@@ -6,4 +6,4 @@ Petit programme écrit en assembleur qui prend en entrée une année entre 1900 
 
 ## Execution
 
-À essayer sur le logiciel pep8
+Executez sur le logiciel pep8
